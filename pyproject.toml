@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "BehaviorDNA"
+version = "1.0.0"
+description = "Behavior Analysis and Compression for Neural Networks"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Kapil Dhinwa", email = "kapildhinwa2010@gmail.com"}
+]
+keywords = [
+    "pytorch",
+    "neural-networks",
+    "behavior-analysis",
+    "compression",
+    "activations",
+    "svd",
+    "power-law",
+    "deep-learning",
+    "model-analysis"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0"]
+viz = ["matplotlib>=3.0.0"]
+all = ["pytest>=7.0.0", "pytest-cov>=4.0.0", "matplotlib>=3.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/kapildhinwa2010-dev/BehaviorDNA"
+Documentation = "https://github.com/kapildhinwa2010-dev/BehaviorDNA#readme"
+Repository = "https://github.com/kapildhinwa2010-dev/BehaviorDNA.git"
+Issues = "https://github.com/kapildhinwa2010-dev/BehaviorDNA/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["behavior_dna*"]
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["behavior_dna"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
