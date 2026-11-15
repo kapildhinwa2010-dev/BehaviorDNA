@@ -578,7 +578,7 @@ class TestIntegration:
         
         from torch.nn import TransformerEncoderLayer
         layer = TransformerEncoderLayer(d_model=128, nhead=8)
-        model = nn.Sequential(layer)
+        model = layer  # Sequential does not accept src=...; use the layer directly
         
         inputs = {'src': torch.randn(5, 10, 128)}
         report = analyzer.analyze_model(model, inputs)
