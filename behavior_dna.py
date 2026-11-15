@@ -421,7 +421,8 @@ class BehaviorDNA(nn.Module):
         self.method = method.lower()
         
         # Extract behavior
-        self.analyzer = BehaviorAnalyzer(num_samples=5)
+        # SVD needs at least target_dim samples to yield target_dim components
+        self.analyzer = BehaviorAnalyzer(num_samples=max(5, target_dim))
         self.behavior_dna: Dict[int, torch.Tensor] = {}
         self.basis_vectors: Dict[int, torch.Tensor] = {}
         
@@ -432,7 +433,7 @@ class BehaviorDNA(nn.Module):
         """Extract behavior DNA from model."""
         # Create dummy inputs
         input_dim = self._get_input_dim()
-        inputs = {'input': torch.randn(5, input_dim)}
+        inputs = {'input': torch.randn(self.analyzer.num_samples, input_dim)}
         
         # Analyze model
         report = self.analyzer.analyze_model(self.model, inputs)
@@ -509,7 +510,7 @@ class BehaviorDNA(nn.Module):
         if layer_idx not in self.behavior_dna:
             return activation
         
-        basis = self.behavior_dna[layer_idx]
+        basis = self.behavior_dna[layer_idx].to(activation.dtype)
         
         # Project
         batch_dim = activation.shape[:-1]
@@ -536,7 +537,7 @@ class BehaviorDNA(nn.Module):
         if layer_idx not in self.behavior_dna:
             return compressed
         
-        basis = self.behavior_dna[layer_idx]
+        basis = self.behavior_dna[layer_idx].to(compressed.dtype)
         
         # Reconstruct
         batch_dim = compressed.shape[:-1]
