@@ -453,10 +453,12 @@ class BehaviorDNA(nn.Module):
             # Get activations
             activations = []
             
-            def hook(m, i, o):
-                activations.append(o.detach().float())
+            def hook(m, args, output, acc=None):
+                out = output[0] if isinstance(output, (tuple, list)) else output
+                acc.append(out.detach().float())
             
-            handle = module.register_forward_hook(hook)
+            import functools
+            handle = module.register_forward_hook(functools.partial(hook, acc=activations))
 
             with torch.no_grad():
                 if isinstance(inputs, dict):
