@@ -307,14 +307,27 @@ class BehaviorAnalyzer:
         
         # Run model multiple times
         model.eval()
+        # Match input dtype to the model's parameter dtype (e.g. float64 input
+        # into a float32 model) so forward does not raise a dtype mismatch.
+        try:
+            model_dtype = next(model.parameters()).dtype
+        except StopIteration:
+            model_dtype = None
+
+        def _prep(t):
+            t = t.to(self.device)
+            if model_dtype is not None and t.is_floating_point():
+                t = t.to(model_dtype)
+            return t
+
         with torch.no_grad():
             for _ in range(self.num_samples):
                 # Move inputs to device
                 if isinstance(inputs, dict):
-                    device_inputs = {k: v.to(self.device) for k, v in inputs.items()}
+                    device_inputs = {k: _prep(v) for k, v in inputs.items()}
                     model(**device_inputs)
                 else:
-                    model(inputs.to(self.device))
+                    model(_prep(inputs))
         
         # Remove hooks
         for h in self._hooks:
