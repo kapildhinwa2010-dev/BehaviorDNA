@@ -310,8 +310,11 @@ class BehaviorAnalyzer:
         with torch.no_grad():
             for _ in range(self.num_samples):
                 # Move inputs to device
-                device_inputs = {k: v.to(self.device) for k, v in inputs.items()}
-                model(**device_inputs)
+                if isinstance(inputs, dict):
+                    device_inputs = {k: v.to(self.device) for k, v in inputs.items()}
+                    model(**device_inputs)
+                else:
+                    model(inputs.to(self.device))
         
         # Remove hooks
         for h in self._hooks:
@@ -454,9 +457,12 @@ class BehaviorDNA(nn.Module):
                 activations.append(o.detach().float())
             
             handle = module.register_forward_hook(hook)
-            
+
             with torch.no_grad():
-                self.model(**inputs)
+                if isinstance(inputs, dict):
+                    self.model(**inputs)
+                else:
+                    self.model(inputs)
             
             handle.remove()
             
