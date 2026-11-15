@@ -580,7 +580,7 @@ class TestIntegration:
         layer = TransformerEncoderLayer(d_model=128, nhead=8)
         model = layer  # Sequential does not accept src=...; use the layer directly
         
-        inputs = {'src': torch.randn(5, 10, 128)}
+        inputs = torch.randn(5, 10, 128)  # positional: avoids kwarg-name coupling
         report = analyzer.analyze_model(model, inputs)
         
         assert isinstance(report, ModelBehaviorReport)
